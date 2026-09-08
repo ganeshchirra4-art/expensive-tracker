@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <title>Expense Tracker - History</title>
+ 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+ 
+    <style>
+ 
+        /* =========================
+           DESIGN TOKENS
+           Same palette as dashboard.html / add_expense.html so
+           every page in the app feels like one product.
+        ========================= */
+ 
+        :root {
+            --bg-a: #eef0ff;
+            --bg-b: #ffe9f3;
+ 
+            --surface: #ffffff;
+ 
+            --ink: #241a3d;
+            --ink-soft: #7b7397;
+ 
+            --violet: #7c3aed;
+            --violet-deep: #5b21b6;
+            --pink: #ec4899;
+            --orange: #f59e0b;
+            --teal: #14b8a6;
+            --blue: #3b82f6;
+            --red: #ef4444;
+ 
+            --line: rgba(36, 26, 61, 0.07);
+ 
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 14px;
+        }
+ 
+ 
+        /* =========================
+           RESET
+        ========================= */
+ 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+ 
+        /* =========================
+           BODY / BACKGROUND MESH
+        ========================= */
+ 
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+ 
+            background:
+                radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.16), transparent 45%),
+                radial-gradient(circle at 90% 15%, rgba(236, 72, 153, 0.16), transparent 45%),
+                radial-gradient(circle at 20% 90%, rgba(20, 184, 166, 0.14), transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.14), transparent 45%),
+                linear-gradient(180deg, var(--bg-a), var(--bg-b));
+ 
+            background-attachment: fixed;
+        }
+ 
+ 
+        h1, .logo {
+            font-family: 'Poppins', 'Inter', sans-serif;
+        }
+ 
+ 
+        /* =========================
+           NAVBAR
+        ========================= */
+ 
+        .navbar {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+ 
+            min-height: 76px;
+ 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+ 
+            padding: 15px 50px;
+ 
+            box-shadow: 0 6px 24px rgba(91, 33, 182, 0.08);
+ 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+ 
+ 
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+ 
+ 
+        .logo span {
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+ 
+ 
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+ 
+ 
+        .nav-links a {
+            text-decoration: none;
+ 
+            color: var(--ink-soft);
+ 
+            padding: 10px 16px;
+ 
+            border-radius: 30px;
+ 
+            font-size: 14px;
+            font-weight: 500;
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .nav-links a:hover {
+            background: rgba(124, 58, 237, 0.08);
+            color: var(--violet-deep);
+        }
+ 
+ 
+        .nav-links a.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+        }
+ 
+ 
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+ 
+        .container {
+            width: 90%;
+            max-width: 1200px;
+ 
+            margin: 0 auto;
+ 
+            padding: 50px 0 60px;
+        }
+ 
+ 
+        /* =========================
+           HEADING
+        ========================= */
+ 
+        .heading {
+            margin-bottom: 30px;
+        }
+ 
+ 
+        .heading h1 {
+            font-size: 34px;
+            font-weight: 700;
+ 
+            margin-bottom: 8px;
+ 
+            letter-spacing: -0.01em;
+        }
+ 
+ 
+        .heading p {
+            color: var(--ink-soft);
+ 
+            font-size: 15px;
+        }
+ 
+ 
+        /* =========================
+           CARD / TABLE
+        ========================= */
+ 
+        .card {
+            background: var(--surface);
+ 
+            border-radius: var(--radius-lg);
+ 
+            padding: 28px;
+ 
+            box-shadow: 0 16px 34px -14px rgba(91, 33, 182, 0.22);
+ 
+            overflow-x: auto;
+        }
+ 
+ 
+        table {
+            width: 100%;
+ 
+            border-collapse: separate;
+            border-spacing: 0;
+ 
+            min-width: 700px;
+        }
+ 
+ 
+        th {
+            text-align: left;
+ 
+            padding: 12px 14px;
+ 
+            font-size: 12px;
+            font-weight: 600;
+ 
+            color: var(--ink-soft);
+ 
+            border-bottom: 1px solid var(--line);
+        }
+ 
+ 
+        td {
+            padding: 15px 14px;
+ 
+            font-size: 14px;
+ 
+            border-bottom: 1px solid var(--line);
+        }
+ 
+ 
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+ 
+ 
+        tbody tr:hover {
+            background: rgba(124, 58, 237, 0.05);
+        }
+ 
+ 
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+ 
+ 
+        .amount {
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+ 
+ 
+        /* =========================
+           DELETE BUTTON
+        ========================= */
+ 
+        .delete-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+ 
+            padding: 8px 14px;
+ 
+            background: rgba(239, 68, 68, 0.1);
+ 
+            color: var(--red);
+ 
+            text-decoration: none;
+ 
+            border-radius: 10px;
+ 
+            font-size: 12px;
+            font-weight: 600;
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .delete-button:hover {
+            background: var(--red);
+            color: #ffffff;
+        }
+ 
+ 
+        /* =========================
+           EMPTY STATE
+        ========================= */
+ 
+        .empty {
+            text-align: center;
+ 
+            padding: 50px 20px;
+ 
+            color: var(--ink-soft);
+        }
+ 
+ 
+        .empty p {
+            margin-bottom: 18px;
+ 
+            font-size: 15px;
+        }
+ 
+ 
+        .add-button {
+            display: inline-block;
+ 
+            padding: 14px 24px;
+ 
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+ 
+            color: #ffffff;
+ 
+            text-decoration: none;
+ 
+            border-radius: var(--radius-sm);
+ 
+            font-size: 14px;
+            font-weight: 600;
+ 
+            box-shadow: 0 10px 24px rgba(124, 58, 237, 0.35);
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .add-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(124, 58, 237, 0.42);
+        }
+ 
+ 
+        /* =========================
+           RESPONSIVE
+        ========================= */
+ 
+        @media (max-width: 900px) {
+ 
+            .navbar {
+                flex-direction: column;
+ 
+                align-items: center;
+ 
+                gap: 15px;
+            }
+ 
+        }
+ 
+ 
+        @media (max-width: 600px) {
+ 
+            .navbar {
+                padding: 15px;
+            }
+ 
+ 
+            .logo {
+                font-size: 20px;
+            }
+ 
+ 
+            .nav-links {
+                justify-content: center;
+ 
+                gap: 5px;
+            }
+ 
+ 
+            .nav-links a {
+                padding: 8px 10px;
+ 
+                font-size: 13px;
+            }
+ 
+ 
+            .container {
+                width: 94%;
+ 
+                padding: 30px 0;
+            }
+ 
+ 
+            .heading h1 {
+                font-size: 26px;
+            }
+ 
+ 
+            .card {
+                padding: 20px;
+            }
+ 
+        }
+ 
+    </style>
+ 
+</head>
+ 
+ 
+<body>
+ 
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+ 
+    <nav class="navbar">
+ 
+        <div class="logo">
+            💜 Expense<span>Tracker</span>
+        </div>
+ 
+        <div class="nav-links">
+ 
+            <a href="{{ url_for('home') }}">
+                Dashboard
+            </a>
+ 
+            <a href="{{ url_for('add_expense') }}">
+                Add Expense
+            </a>
+ 
+            <a
+                href="{{ url_for('history') }}"
+                class="active"
+            >
+                History
+            </a>
+ 
+            <a href="{{ url_for('budget_page') }}">
+                Budget
+            </a>
+ 
+            <a href="{{ url_for('reports') }}">
+                Reports
+            </a>
+ 
+        </div>
+ 
+    </nav>
+ 
+ 
+    <!-- =========================
+         MAIN
+    ========================== -->
+ 
+    <main class="container">
+ 
+        <div class="heading">
+ 
+            <h1>
+                Expense History
+            </h1>
+ 
+            <p>
+                View all your recorded expenses.
+            </p>
+ 
+        </div>
+ 
+ 
+        <div class="card">
+ 
+            {% if expenses %}
+ 
+                <table>
+ 
+                    <thead>
+ 
+                        <tr>
+ 
+                            <th>
+                                ID
+                            </th>
+ 
+                            <th>
+                                Date
+                            </th>
+ 
+                            <th>
+                                Description
+                            </th>
+ 
+                            <th>
+                                Category
+                            </th>
+ 
+                            <th>
+                                Amount
+                            </th>
+ 
+                            <th>
+                                Action
+                            </th>
+ 
+                        </tr>
+ 
+                    </thead>
+ 
+ 
+                    <tbody>
+ 
+                        {% for expense in expenses %}
+ 
+                            <tr>
+ 
+                                <td>
+                                    {{ expense["id"] }}
+                                </td>
+ 
+                                <td>
+                                    {{ expense["date"] }}
+                                </td>
+ 
+                                <td>
+                                    {{ expense["description"] }}
+                                </td>
+ 
+                                <td>
+                                    {{ expense["category"] }}
+                                </td>
+ 
+                                <td class="amount">
+                                    ₹{{ "%.2f"|format(expense["amount"]) }}
+                                </td>
+ 
+                                <td>
+ 
+                                    <a
+                                        class="delete-button"
+                                        href="{{ url_for('delete_expense', expense_id=expense['id']) }}"
+                                        onclick="return confirm('Are you sure you want to delete this expense?');"
+                                    >
+                                        Delete
+                                    </a>
+ 
+                                </td>
+ 
+                            </tr>
+ 
+                        {% endfor %}
+ 
+                    </tbody>
+ 
+                </table>
+ 
+            {% else %}
+ 
+                <div class="empty">
+ 
+                    <p>
+                        No expenses found.
+                    </p>
+ 
+                    <a
+                        class="add-button"
+                        href="{{ url_for('add_expense') }}"
+                    >
+                        + Add Your First Expense
+                    </a>
+ 
+                </div>
+ 
+            {% endif %}
+ 
+        </div>
+ 
+    </main>
+ 
+</body>
+ 
+</html>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+ 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <title>Expense Tracker - Dashboard</title>
+ 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+ 
+    <style>
+ 
+        /* =========================
+           DESIGN TOKENS
+           Palette: playful gradient set on a soft lavender-mesh
+           background. Each stat card gets its own accent hue so
+           the dashboard reads as colorful rather than monotone,
+           with tinted "glow" shadows standing in for 3D depth.
+        ========================= */
+ 
+        :root {
+            --bg-a: #eef0ff;
+            --bg-b: #ffe9f3;
+ 
+            --surface: #ffffff;
+ 
+            --ink: #241a3d;
+            --ink-soft: #7b7397;
+ 
+            --violet: #7c3aed;
+            --violet-deep: #5b21b6;
+            --pink: #ec4899;
+            --orange: #f59e0b;
+            --teal: #14b8a6;
+            --blue: #3b82f6;
+ 
+            --line: rgba(36, 26, 61, 0.07);
+ 
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 14px;
+        }
+ 
+ 
+        /* =========================
+           RESET
+        ========================= */
+ 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+ 
+        /* =========================
+           BODY / BACKGROUND MESH
+        ========================= */
+ 
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+ 
+            background:
+                radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.16), transparent 45%),
+                radial-gradient(circle at 90% 15%, rgba(236, 72, 153, 0.16), transparent 45%),
+                radial-gradient(circle at 20% 90%, rgba(20, 184, 166, 0.14), transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.14), transparent 45%),
+                linear-gradient(180deg, var(--bg-a), var(--bg-b));
+ 
+            background-attachment: fixed;
+        }
+ 
+ 
+        h1, h2, .card-value, .logo {
+            font-family: 'Poppins', 'Inter', sans-serif;
+        }
+ 
+ 
+        /* =========================
+           NAVBAR
+        ========================= */
+ 
+        .navbar {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+ 
+            min-height: 76px;
+ 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+ 
+            padding: 15px 50px;
+ 
+            box-shadow: 0 6px 24px rgba(91, 33, 182, 0.08);
+ 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+ 
+ 
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+ 
+ 
+        .logo span {
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+ 
+ 
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+ 
+ 
+        .nav-links a {
+            text-decoration: none;
+ 
+            color: var(--ink-soft);
+ 
+            padding: 10px 16px;
+ 
+            border-radius: 30px;
+ 
+            font-size: 14px;
+            font-weight: 500;
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .nav-links a:hover {
+            background: rgba(124, 58, 237, 0.08);
+            color: var(--violet-deep);
+        }
+ 
+ 
+        .nav-links a.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+        }
+ 
+ 
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+ 
+        .container {
+            width: 90%;
+            max-width: 1200px;
+ 
+            margin: 0 auto;
+ 
+            padding: 50px 0 60px;
+ 
+            position: relative;
+        }
+ 
+ 
+        /* =========================
+           HEADING
+        ========================= */
+ 
+        .heading {
+            margin-bottom: 40px;
+ 
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+ 
+ 
+        .heading-text h1 {
+            font-size: 34px;
+            font-weight: 700;
+ 
+            margin-bottom: 8px;
+ 
+            letter-spacing: -0.01em;
+        }
+ 
+ 
+        .heading-text p {
+            color: var(--ink-soft);
+ 
+            font-size: 15px;
+        }
+ 
+ 
+        .heading-art {
+            flex-shrink: 0;
+        }
+ 
+ 
+        /* =========================
+           ADD BUTTON
+        ========================= */
+ 
+        .add-button {
+            display: inline-block;
+ 
+            padding: 14px 26px;
+ 
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+ 
+            color: #ffffff;
+ 
+            text-decoration: none;
+ 
+            border-radius: var(--radius-sm);
+ 
+            font-size: 14px;
+            font-weight: 600;
+ 
+            box-shadow: 0 10px 24px rgba(124, 58, 237, 0.35);
+ 
+            transition: 0.2s ease;
+ 
+            white-space: nowrap;
+        }
+ 
+ 
+        .add-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 14px 30px rgba(124, 58, 237, 0.42);
+        }
+ 
+ 
+        .add-button:active {
+            transform: translateY(0);
+        }
+ 
+ 
+        /* =========================
+           STAT CARDS
+        ========================= */
+ 
+        .stats {
+            display: grid;
+ 
+            grid-template-columns: repeat(4, 1fr);
+ 
+            gap: 22px;
+ 
+            margin-bottom: 26px;
+        }
+ 
+ 
+        .card {
+            background: var(--surface);
+ 
+            padding: 24px;
+ 
+            border-radius: var(--radius-lg);
+ 
+            box-shadow: 0 14px 30px -10px var(--glow, rgba(91, 33, 182, 0.28));
+ 
+            transform: perspective(800px) rotateX(0deg);
+ 
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+ 
+ 
+        .card:hover {
+            transform: perspective(800px) rotateX(4deg) translateY(-4px);
+ 
+            box-shadow: 0 20px 38px -10px var(--glow, rgba(91, 33, 182, 0.36));
+        }
+ 
+ 
+        .card:nth-child(1) { --glow: rgba(124, 58, 237, 0.32); }
+        .card:nth-child(2) { --glow: rgba(236, 72, 153, 0.32); }
+        .card:nth-child(3) { --glow: rgba(245, 158, 11, 0.32); }
+        .card:nth-child(4) { --glow: rgba(20, 184, 166, 0.32); }
+ 
+ 
+        .card-icon {
+            width: 42px;
+            height: 42px;
+ 
+            border-radius: 12px;
+ 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+ 
+            font-size: 20px;
+ 
+            margin-bottom: 16px;
+ 
+            color: #ffffff;
+        }
+ 
+ 
+        .card:nth-child(1) .card-icon { background: linear-gradient(135deg, var(--violet), #a78bfa); }
+        .card:nth-child(2) .card-icon { background: linear-gradient(135deg, var(--pink), #f9a8d4); }
+        .card:nth-child(3) .card-icon { background: linear-gradient(135deg, var(--orange), #fcd34d); }
+        .card:nth-child(4) .card-icon { background: linear-gradient(135deg, var(--teal), #5eead4); }
+ 
+ 
+        .card-title {
+            color: var(--ink-soft);
+ 
+            font-size: 13px;
+            font-weight: 500;
+ 
+            margin-bottom: 10px;
+        }
+ 
+ 
+        .card-value {
+            font-size: 26px;
+            font-weight: 700;
+ 
+            color: var(--ink);
+ 
+            letter-spacing: -0.01em;
+        }
+ 
+ 
+        /* =========================
+           TWO COLUMN CONTENT
+        ========================== */
+ 
+        .content {
+            display: grid;
+ 
+            grid-template-columns: 1fr 1fr;
+ 
+            gap: 22px;
+        }
+ 
+ 
+        .section {
+            background: var(--surface);
+ 
+            border-radius: var(--radius-lg);
+ 
+            padding: 28px;
+ 
+            box-shadow: 0 16px 34px -14px rgba(91, 33, 182, 0.22);
+        }
+ 
+ 
+        .section h2 {
+            font-size: 18px;
+            font-weight: 600;
+ 
+            margin-bottom: 22px;
+        }
+ 
+ 
+        /* =========================
+           BUDGET
+        ========================= */
+ 
+        .budget-info {
+            display: flex;
+ 
+            align-items: center;
+ 
+            justify-content: space-between;
+ 
+            margin-bottom: 16px;
+        }
+ 
+ 
+        .budget-info span {
+            color: var(--ink-soft);
+ 
+            font-size: 14px;
+        }
+ 
+ 
+        .budget-info strong {
+            font-size: 17px;
+            font-weight: 700;
+        }
+ 
+ 
+        .progress {
+            width: 100%;
+ 
+            height: 14px;
+ 
+            background: #f1eefc;
+ 
+            border-radius: 20px;
+ 
+            overflow: hidden;
+ 
+            box-shadow: inset 0 2px 4px rgba(91, 33, 182, 0.12);
+        }
+ 
+ 
+        .progress-fill {
+            width: var(--progress-width, 0%);
+ 
+            height: 100%;
+ 
+            background: linear-gradient(90deg, var(--violet), var(--pink), var(--orange));
+ 
+            border-radius: 20px;
+ 
+            transition: width 0.6s ease;
+        }
+ 
+ 
+        .budget-details {
+            display: flex;
+ 
+            align-items: center;
+ 
+            justify-content: space-between;
+ 
+            gap: 10px;
+ 
+            margin-top: 14px;
+ 
+            color: var(--ink-soft);
+ 
+            font-size: 13px;
+        }
+ 
+ 
+        /* =========================
+           CATEGORY
+        ========================= */
+ 
+        .category {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+ 
+            margin-bottom: 18px;
+        }
+ 
+ 
+        .category:last-child {
+            margin-bottom: 0;
+        }
+ 
+ 
+        .category-icon {
+            flex-shrink: 0;
+ 
+            width: 34px;
+            height: 34px;
+ 
+            border-radius: 10px;
+ 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+ 
+            color: #ffffff;
+ 
+            font-size: 14px;
+            font-weight: 700;
+ 
+            text-transform: uppercase;
+        }
+ 
+ 
+        .category:nth-child(5n+1) .category-icon { background: linear-gradient(135deg, var(--violet), #a78bfa); }
+        .category:nth-child(5n+2) .category-icon { background: linear-gradient(135deg, var(--pink), #f9a8d4); }
+        .category:nth-child(5n+3) .category-icon { background: linear-gradient(135deg, var(--orange), #fcd34d); }
+        .category:nth-child(5n+4) .category-icon { background: linear-gradient(135deg, var(--teal), #5eead4); }
+        .category:nth-child(5n+5) .category-icon { background: linear-gradient(135deg, var(--blue), #93c5fd); }
+ 
+ 
+        .category-body {
+            flex: 1;
+        }
+ 
+ 
+        .category-top {
+            display: flex;
+ 
+            align-items: center;
+ 
+            justify-content: space-between;
+ 
+            gap: 10px;
+ 
+            margin-bottom: 7px;
+ 
+            font-size: 14px;
+        }
+ 
+ 
+        .category-top span {
+            color: var(--ink);
+ 
+            text-transform: capitalize;
+            font-weight: 500;
+        }
+ 
+ 
+        .category-top strong {
+            font-size: 14px;
+            font-weight: 700;
+        }
+ 
+ 
+        .bar {
+            height: 9px;
+ 
+            background: #f1eefc;
+ 
+            border-radius: 20px;
+ 
+            overflow: hidden;
+ 
+            box-shadow: inset 0 2px 3px rgba(91, 33, 182, 0.1);
+        }
+ 
+ 
+        .bar-fill {
+            width: var(--bar-width, 0%);
+ 
+            height: 100%;
+ 
+            background: linear-gradient(90deg, var(--violet), var(--pink));
+ 
+            border-radius: 20px;
+ 
+            transition: width 0.6s ease;
+        }
+ 
+ 
+        /* =========================
+           EMPTY MESSAGE
+        ========================= */
+ 
+        .empty {
+            color: var(--ink-soft);
+ 
+            padding: 10px 0;
+ 
+            font-size: 14px;
+        }
+ 
+ 
+        /* =========================
+           RECENT EXPENSES
+        ========================= */
+ 
+        .table-section {
+            margin-top: 26px;
+ 
+            background: var(--surface);
+ 
+            border-radius: var(--radius-lg);
+ 
+            padding: 28px;
+ 
+            box-shadow: 0 16px 34px -14px rgba(91, 33, 182, 0.22);
+ 
+            overflow-x: auto;
+        }
+ 
+ 
+        .table-section h2 {
+            font-size: 18px;
+            font-weight: 600;
+ 
+            margin-bottom: 22px;
+        }
+ 
+ 
+        table {
+            width: 100%;
+ 
+            border-collapse: separate;
+            border-spacing: 0;
+ 
+            min-width: 600px;
+        }
+ 
+ 
+        th {
+            text-align: left;
+ 
+            font-size: 12px;
+            font-weight: 600;
+ 
+            color: var(--ink-soft);
+ 
+            padding: 12px 14px;
+ 
+            border-bottom: 1px solid var(--line);
+        }
+ 
+ 
+        td {
+            padding: 15px 14px;
+ 
+            font-size: 14px;
+ 
+            border-bottom: 1px solid var(--line);
+        }
+ 
+ 
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+ 
+ 
+        tbody tr:hover {
+            background: rgba(124, 58, 237, 0.05);
+        }
+ 
+ 
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+ 
+ 
+        .amount {
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+ 
+ 
+        /* =========================
+           RESPONSIVE
+        ========================= */
+ 
+        @media (max-width: 1000px) {
+ 
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+ 
+            .navbar {
+                padding: 15px 25px;
+            }
+ 
+        }
+ 
+ 
+        @media (max-width: 900px) {
+ 
+            .content {
+                grid-template-columns: 1fr;
+            }
+ 
+            .navbar {
+                flex-direction: column;
+ 
+                align-items: center;
+ 
+                gap: 15px;
+            }
+ 
+            .heading-art {
+                display: none;
+            }
+ 
+        }
+ 
+ 
+        @media (max-width: 600px) {
+ 
+            .container {
+                width: 94%;
+ 
+                padding: 30px 0;
+            }
+ 
+ 
+            .navbar {
+                padding: 15px;
+            }
+ 
+ 
+            .logo {
+                font-size: 20px;
+            }
+ 
+ 
+            .nav-links {
+                justify-content: center;
+ 
+                gap: 5px;
+            }
+ 
+ 
+            .nav-links a {
+                padding: 8px 10px;
+ 
+                font-size: 13px;
+            }
+ 
+ 
+            .stats {
+                grid-template-columns: 1fr;
+            }
+ 
+ 
+            .heading {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+ 
+ 
+            .heading-text h1 {
+                font-size: 26px;
+            }
+ 
+ 
+            .card {
+                padding: 20px;
+            }
+ 
+ 
+            .card-value {
+                font-size: 22px;
+            }
+ 
+ 
+            .section {
+                padding: 20px;
+            }
+ 
+ 
+            .budget-details {
+                flex-direction: column;
+ 
+                align-items: flex-start;
+            }
+ 
+        }
+ 
+ 
+        @media (prefers-reduced-motion: reduce) {
+ 
+            .card,
+            .add-button,
+            .progress-fill,
+            .bar-fill,
+            tbody tr {
+                transition: none;
+            }
+ 
+        }
+ 
+    </style>
+ 
+</head>
+ 
+ 
+<body>
+ 
+ 
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+ 
+    <nav class="navbar">
+ 
+        <div class="logo">
+            💜 Expense<span>Tracker</span>
+        </div>
+ 
+ 
+        <div class="nav-links">
+ 
+            <a
+                href="{{ url_for('home') }}"
+                class="active"
+            >
+                Dashboard
+            </a>
+ 
+ 
+            <a href="{{ url_for('add_expense') }}">
+                Add Expense
+            </a>
+ 
+ 
+            <a href="{{ url_for('history') }}">
+                History
+            </a>
+ 
+ 
+            <a href="{{ url_for('budget_page') }}">
+                Budget
+            </a>
+ 
+ 
+            <a href="{{ url_for('reports') }}">
+                Reports
+            </a>
+ 
+        </div>
+ 
+    </nav>
+ 
+ 
+    <!-- =========================
+         MAIN
+    ========================== -->
+ 
+    <main class="container">
+ 
+ 
+        <!-- =========================
+             HEADING
+        ========================== -->
+ 
+        <div class="heading">
+ 
+            <div class="heading-text">
+ 
+                <h1>
+                    Expense Dashboard
+                </h1>
+ 
+ 
+                <p>
+                    Track your expenses and manage your budget.
+                </p>
+ 
+ 
+                <a
+                    class="add-button"
+                    href="{{ url_for('add_expense') }}"
+                    style="margin-top: 18px; display: inline-block;"
+                >
+                    + Add Expense
+                </a>
+ 
+            </div>
+ 
+ 
+            <!-- Decorative 3D wallet illustration -->
+ 
+            <div class="heading-art">
+ 
+                <svg width="160" height="120" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+ 
+                    <ellipse cx="80" cy="105" rx="65" ry="10" fill="#7c3aed" opacity="0.08"/>
+ 
+                    <rect x="18" y="30" width="124" height="70" rx="16" fill="url(#walletBody)"/>
+                    <rect x="18" y="30" width="124" height="24" rx="12" fill="#ffffff" opacity="0.18"/>
+ 
+                    <rect x="92" y="55" width="42" height="26" rx="8" fill="#fbbf24"/>
+                    <circle cx="113" cy="68" r="6" fill="#b45309"/>
+ 
+                    <circle cx="40" cy="18" r="14" fill="#ec4899"/>
+                    <circle cx="40" cy="18" r="14" fill="url(#coinShine)"/>
+                    <text x="40" y="23" font-size="13" text-anchor="middle" fill="#ffffff" font-family="Poppins, sans-serif" font-weight="700">₹</text>
+ 
+                    <circle cx="66" cy="10" r="10" fill="#14b8a6"/>
+                    <text x="66" y="14" font-size="10" text-anchor="middle" fill="#ffffff" font-family="Poppins, sans-serif" font-weight="700">$</text>
+ 
+                    <defs>
+                        <linearGradient id="walletBody" x1="18" y1="30" x2="142" y2="100" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#7c3aed"/>
+                            <stop offset="1" stop-color="#5b21b6"/>
+                        </linearGradient>
+                        <radialGradient id="coinShine" cx="0.3" cy="0.3" r="0.8">
+                            <stop stop-color="#ffffff" stop-opacity="0.35"/>
+                            <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+                        </radialGradient>
+                    </defs>
+ 
+                </svg>
+ 
+            </div>
+ 
+        </div>
+ 
+ 
+        <!-- =========================
+             STAT CARDS
+        ========================== -->
+ 
+        <section class="stats">
+ 
+ 
+            <!-- TOTAL EXPENSES -->
+ 
+            <div class="card">
+ 
+                <div class="card-icon">💰</div>
+ 
+                <div class="card-title">
+                    Total Expenses
+                </div>
+ 
+ 
+                <div class="card-value">
+ 
+                    ₹{{ "%.2f"|format(total_expenses|default(0)|float) }}
+ 
+                </div>
+ 
+            </div>
+ 
+ 
+            <!-- THIS MONTH -->
+ 
+            <div class="card">
+ 
+                <div class="card-icon">📅</div>
+ 
+                <div class="card-title">
+                    This Month
+                </div>
+ 
+ 
+                <div class="card-value">
+ 
+                    ₹{{ "%.2f"|format(monthly_total|default(0)|float) }}
+ 
+                </div>
+ 
+            </div>
+ 
+ 
+            <!-- MONTHLY BUDGET -->
+ 
+            <div class="card">
+ 
+                <div class="card-icon">🎯</div>
+ 
+                <div class="card-title">
+                    Monthly Budget
+                </div>
+ 
+ 
+                <div class="card-value">
+ 
+                    ₹{{ "%.2f"|format(monthly_budget|default(0)|float) }}
+ 
+                </div>
+ 
+            </div>
+ 
+ 
+            <!-- TRANSACTIONS -->
+ 
+            <div class="card">
+ 
+                <div class="card-icon">🧾</div>
+ 
+                <div class="card-title">
+                    Transactions
+                </div>
+ 
+ 
+                <div class="card-value">
+ 
+                    {{ transaction_count|default(0) }}
+ 
+                </div>
+ 
+            </div>
+ 
+        </section>
+ 
+ 
+        <!-- =========================
+             TWO COLUMN CONTENT
+        ========================== -->
+ 
+        <section class="content">
+ 
+ 
+            <!-- =========================
+                 BUDGET OVERVIEW
+            ========================== -->
+ 
+            <div class="section">
+ 
+                <h2>
+                    Budget Overview
+                </h2>
+ 
+ 
+                <div class="budget-info">
+ 
+                    <span>
+                        Spent
+                    </span>
+ 
+ 
+                    <strong>
+ 
+                        ₹{{ "%.2f"|format(monthly_total|default(0)|float) }}
+ 
+                    </strong>
+ 
+                </div>
+ 
+ 
+                <!--
+                    Calculate percentage here.
+                    This is HTML/Jinja, NOT inside CSS.
+                -->
+ 
+                {% set safe_monthly_total = monthly_total|default(0)|float %}
+ 
+                {% set safe_monthly_budget = monthly_budget|default(0)|float %}
+ 
+ 
+                {% if safe_monthly_budget > 0 %}
+ 
+                    {% set budget_percentage =
+                        (safe_monthly_total / safe_monthly_budget * 100)
+                    %}
+ 
+                    {% if budget_percentage > 100 %}
+ 
+                        {% set budget_percentage = 100 %}
+ 
+                    {% endif %}
+ 
+                {% else %}
+ 
+                    {% set budget_percentage = 0 %}
+ 
+                {% endif %}
+ 
+ 
+                <div class="progress">
+ 
+                    <div
+                        class="progress-fill"
+                        data-progress="{{ budget_percentage }}"
+                    ></div>
+ 
+                </div>
+ 
+ 
+                <div class="budget-details">
+ 
+                    <span>
+                        {{ current_month|default("Current Month") }}
+                    </span>
+ 
+ 
+                    <span>
+ 
+                        Remaining:
+ 
+                        ₹{{ "%.2f"|format(remaining_budget|default(0)|float) }}
+ 
+                    </span>
+ 
+                </div>
+ 
+            </div>
+ 
+ 
+            <!-- =========================
+                 CATEGORY SPENDING
+            ========================== -->
+ 
+            <div class="section">
+ 
+                <h2>
+                    Category Spending
+                </h2>
+ 
+ 
+                {% if category_totals %}
+ 
+                    {% set max_total =
+                        category_totals.values()|list|max
+                    %}
+ 
+ 
+                    {% for category, total in category_totals.items() %}
+ 
+                        <div class="category">
+ 
+                            <div class="category-icon">
+                                {{ category[0] }}
+                            </div>
+ 
+ 
+                            <div class="category-body">
+ 
+                                <div class="category-top">
+ 
+                                    <span>
+                                        {{ category }}
+                                    </span>
+ 
+ 
+                                    <strong>
+ 
+                                        ₹{{ "%.2f"|format(total|float) }}
+ 
+                                    </strong>
+ 
+                                </div>
+ 
+ 
+                                {% if max_total|float > 0 %}
+ 
+                                    {% set category_percentage =
+                                        (total|float / max_total|float * 100)
+                                    %}
+ 
+                                {% else %}
+ 
+                                    {% set category_percentage = 0 %}
+ 
+                                {% endif %}
+ 
+ 
+                                <div class="bar">
+ 
+                                    <div
+                                        class="bar-fill"
+                                        data-width="{{ category_percentage }}"
+                                    ></div>
+ 
+                                </div>
+ 
+                            </div>
+ 
+                        </div>
+ 
+                    {% endfor %}
+ 
+ 
+                {% else %}
+ 
+                    <p class="empty">
+                        No expenses recorded for this month.
+                    </p>
+ 
+                {% endif %}
+ 
+            </div>
+ 
+        </section>
+ 
+ 
+        <!-- =========================
+             RECENT EXPENSES
+        ========================== -->
+ 
+        <section class="table-section">
+ 
+            <h2>
+                Recent Expenses
+            </h2>
+ 
+ 
+            {% if recent_expenses %}
+ 
+                <table>
+ 
+                    <thead>
+ 
+                        <tr>
+ 
+                            <th>
+                                Date
+                            </th>
+ 
+ 
+                            <th>
+                                Description
+                            </th>
+ 
+ 
+                            <th>
+                                Category
+                            </th>
+ 
+ 
+                            <th>
+                                Amount
+                            </th>
+ 
+                        </tr>
+ 
+                    </thead>
+ 
+ 
+                    <tbody>
+ 
+                        {% for expense in recent_expenses %}
+ 
+                            <tr>
+ 
+                                <td>
+                                    {{ expense.get("date", "-") }}
+                                </td>
+ 
+ 
+                                <td>
+                                    {{ expense.get("description", "-") }}
+                                </td>
+ 
+ 
+                                <td>
+                                    {{ expense.get("category", "-") }}
+                                </td>
+ 
+ 
+                                <td class="amount">
+ 
+                                    ₹{{ "%.2f"|format(
+                                        expense.get("amount", 0)|float
+                                    ) }}
+ 
+                                </td>
+ 
+                            </tr>
+ 
+                        {% endfor %}
+ 
+                    </tbody>
+ 
+                </table>
+ 
+ 
+            {% else %}
+ 
+                <p class="empty">
+                    No expenses found.
+                </p>
+ 
+            {% endif %}
+ 
+        </section>
+ 
+    </main>
+ 
+ 
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+ 
+    <script>
+ 
+        /*
+         * Budget progress bar
+         *
+         * We use JavaScript instead of putting
+         * Jinja code directly inside CSS.
+         */
+ 
+        document.querySelectorAll(".progress-fill").forEach(function(element) {
+ 
+            let value = parseFloat(
+                element.getAttribute("data-progress")
+            );
+ 
+ 
+            if (isNaN(value)) {
+                value = 0;
+            }
+ 
+ 
+            if (value < 0) {
+                value = 0;
+            }
+ 
+ 
+            if (value > 100) {
+                value = 100;
+            }
+ 
+ 
+            element.style.width = value + "%";
+ 
+        });
+ 
+ 
+        /*
+         * Category progress bars
+         */
+ 
+        document.querySelectorAll(".bar-fill").forEach(function(element) {
+ 
+            let value = parseFloat(
+                element.getAttribute("data-width")
+            );
+ 
+ 
+            if (isNaN(value)) {
+                value = 0;
+            }
+ 
+ 
+            if (value < 0) {
+                value = 0;
+            }
+ 
+ 
+            if (value > 100) {
+                value = 100;
+            }
+ 
+ 
+            element.style.width = value + "%";
+ 
+        });
+ 
+    </script>
+ 
+</body>
+ 
+</html>
+ 
+
+
+
+
+
+
+
+
+
+

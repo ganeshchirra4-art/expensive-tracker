@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <title>Expense Tracker - Budget</title>
+ 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+ 
+    <style>
+ 
+        /* =========================
+           DESIGN TOKENS
+           Same palette as dashboard.html / add_expense.html /
+           history.html so every page in the app feels like one
+           product.
+        ========================= */
+ 
+        :root {
+            --bg-a: #eef0ff;
+            --bg-b: #ffe9f3;
+ 
+            --surface: #ffffff;
+ 
+            --ink: #241a3d;
+            --ink-soft: #7b7397;
+ 
+            --violet: #7c3aed;
+            --violet-deep: #5b21b6;
+            --pink: #ec4899;
+            --orange: #f59e0b;
+            --teal: #14b8a6;
+            --blue: #3b82f6;
+ 
+            --green: #10b981;
+            --red: #ef4444;
+ 
+            --line: rgba(36, 26, 61, 0.09);
+ 
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 14px;
+        }
+ 
+ 
+        /* =========================
+           RESET
+        ========================= */
+ 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+ 
+        /* =========================
+           BODY / BACKGROUND MESH
+        ========================= */
+ 
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+ 
+            background:
+                radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.16), transparent 45%),
+                radial-gradient(circle at 90% 15%, rgba(236, 72, 153, 0.16), transparent 45%),
+                radial-gradient(circle at 20% 90%, rgba(20, 184, 166, 0.14), transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.14), transparent 45%),
+                linear-gradient(180deg, var(--bg-a), var(--bg-b));
+ 
+            background-attachment: fixed;
+        }
+ 
+ 
+        h1, h2, .logo {
+            font-family: 'Poppins', 'Inter', sans-serif;
+        }
+ 
+ 
+        /* =========================
+           NAVBAR
+        ========================= */
+ 
+        .navbar {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+ 
+            min-height: 76px;
+ 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+ 
+            padding: 15px 50px;
+ 
+            box-shadow: 0 6px 24px rgba(91, 33, 182, 0.08);
+ 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+ 
+ 
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+ 
+ 
+        .logo span {
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+ 
+ 
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+ 
+ 
+        .nav-links a {
+            text-decoration: none;
+ 
+            color: var(--ink-soft);
+ 
+            padding: 10px 16px;
+ 
+            border-radius: 30px;
+ 
+            font-size: 14px;
+            font-weight: 500;
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .nav-links a:hover {
+            background: rgba(124, 58, 237, 0.08);
+            color: var(--violet-deep);
+        }
+ 
+ 
+        .nav-links a.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+        }
+ 
+ 
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+ 
+        .container {
+            width: 90%;
+            max-width: 800px;
+ 
+            margin: 0 auto;
+ 
+            padding: 50px 0 60px;
+        }
+ 
+ 
+        /* =========================
+           HEADING
+        ========================= */
+ 
+        .heading {
+            margin-bottom: 26px;
+        }
+ 
+ 
+        .heading h1 {
+            font-size: 34px;
+            font-weight: 700;
+ 
+            margin-bottom: 8px;
+ 
+            letter-spacing: -0.01em;
+        }
+ 
+ 
+        .heading p {
+            color: var(--ink-soft);
+ 
+            font-size: 15px;
+        }
+ 
+ 
+        /* =========================
+           FLASH MESSAGES
+        ========================= */
+ 
+        .message {
+            padding: 12px 16px;
+ 
+            border-radius: var(--radius-sm);
+ 
+            font-size: 14px;
+            font-weight: 500;
+ 
+            margin-bottom: 20px;
+        }
+ 
+ 
+        .message.success {
+            background: rgba(16, 185, 129, 0.12);
+            color: #067a56;
+        }
+ 
+ 
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #c62828;
+        }
+ 
+ 
+        /* =========================
+           CARD
+        ========================= */
+ 
+        .card {
+            background: var(--surface);
+ 
+            border-radius: var(--radius-lg);
+ 
+            padding: 30px;
+ 
+            margin-bottom: 22px;
+ 
+            box-shadow: 0 16px 34px -14px rgba(91, 33, 182, 0.22);
+        }
+ 
+ 
+        .card h2 {
+            font-size: 19px;
+            font-weight: 600;
+ 
+            margin-bottom: 22px;
+        }
+ 
+ 
+        /* =========================
+           BUDGET INFO BOXES
+        ========================= */
+ 
+        .budget-info {
+            display: grid;
+ 
+            grid-template-columns: repeat(2, 1fr);
+ 
+            gap: 16px;
+        }
+ 
+ 
+        .info-box {
+            padding: 22px;
+ 
+            border-radius: var(--radius-md);
+ 
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.08), rgba(236, 72, 153, 0.08));
+        }
+ 
+ 
+        .info-box:nth-child(2) {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.1), rgba(59, 130, 246, 0.08));
+        }
+ 
+ 
+        .info-box p {
+            color: var(--ink-soft);
+ 
+            font-size: 13px;
+ 
+            margin-bottom: 10px;
+        }
+ 
+ 
+        .info-box strong {
+            font-size: 26px;
+            font-weight: 700;
+ 
+            color: var(--ink);
+        }
+ 
+ 
+        /* =========================
+           FORM FIELDS
+        ========================= */
+ 
+        .form-group {
+            margin-bottom: 20px;
+        }
+ 
+ 
+        label {
+            display: block;
+ 
+            font-size: 13px;
+            font-weight: 600;
+ 
+            color: var(--ink);
+ 
+            margin-bottom: 8px;
+        }
+ 
+ 
+        input {
+            width: 100%;
+ 
+            padding: 12px 14px;
+ 
+            border: 1.5px solid var(--line);
+ 
+            border-radius: var(--radius-sm);
+ 
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 14px;
+ 
+            color: var(--ink);
+ 
+            background: #faf9ff;
+ 
+            outline: none;
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        input:focus {
+            border-color: var(--violet);
+ 
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.14);
+ 
+            background: #ffffff;
+        }
+ 
+ 
+        /* =========================
+           BUTTON
+        ========================= */
+ 
+        button {
+            border: none;
+ 
+            padding: 14px 24px;
+ 
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+ 
+            color: #ffffff;
+ 
+            border-radius: var(--radius-sm);
+ 
+            cursor: pointer;
+ 
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+ 
+            box-shadow: 0 10px 24px rgba(124, 58, 237, 0.32);
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(124, 58, 237, 0.4);
+        }
+ 
+ 
+        button:active {
+            transform: translateY(0);
+        }
+ 
+ 
+        /* =========================
+           RESPONSIVE
+        ========================= */
+ 
+        @media (max-width: 700px) {
+ 
+            .navbar {
+                flex-direction: column;
+ 
+                align-items: center;
+ 
+                gap: 15px;
+ 
+                padding: 15px;
+            }
+ 
+ 
+            .nav-links {
+                justify-content: center;
+ 
+                gap: 5px;
+            }
+ 
+ 
+            .nav-links a {
+                padding: 8px 10px;
+ 
+                font-size: 13px;
+            }
+ 
+ 
+            .container {
+                width: 94%;
+ 
+                padding: 30px 0;
+            }
+ 
+ 
+            .heading h1 {
+                font-size: 26px;
+            }
+ 
+ 
+            .card {
+                padding: 22px;
+            }
+ 
+ 
+            .budget-info {
+                grid-template-columns: 1fr;
+            }
+ 
+        }
+ 
+    </style>
+ 
+</head>
+ 
+ 
+<body>
+ 
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+ 
+    <nav class="navbar">
+ 
+        <div class="logo">
+            💜 Expense<span>Tracker</span>
+        </div>
+ 
+        <div class="nav-links">
+ 
+            <a href="{{ url_for('home') }}">
+                Dashboard
+            </a>
+ 
+            <a href="{{ url_for('add_expense') }}">
+                Add Expense
+            </a>
+ 
+            <a href="{{ url_for('history') }}">
+                History
+            </a>
+ 
+            <a
+                href="{{ url_for('budget_page') }}"
+                class="active"
+            >
+                Budget
+            </a>
+ 
+            <a href="{{ url_for('reports') }}">
+                Reports
+            </a>
+ 
+        </div>
+ 
+    </nav>
+ 
+ 
+    <!-- =========================
+         MAIN
+    ========================== -->
+ 
+    <main class="container">
+ 
+        <div class="heading">
+ 
+            <h1>
+                Budget Management
+            </h1>
+ 
+            <p>
+                Set and manage your monthly spending budget.
+            </p>
+ 
+        </div>
+ 
+ 
+        <!-- FLASH MESSAGES -->
+ 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+ 
+            {% if messages %}
+ 
+                {% for category, message in messages %}
+ 
+                    <div class="message {{ category }}">
+                        {{ message }}
+                    </div>
+ 
+                {% endfor %}
+ 
+            {% endif %}
+ 
+        {% endwith %}
+ 
+ 
+        <!-- CURRENT BUDGET -->
+ 
+        <div class="card">
+ 
+            <h2>
+                Current Budget
+            </h2>
+ 
+            <div class="budget-info">
+ 
+                <div class="info-box">
+ 
+                    <p>
+                        Monthly Budget
+                    </p>
+ 
+                    <strong>
+                        ₹{{ "%.2f"|format(monthly_budget) }}
+                    </strong>
+ 
+                </div>
+ 
+ 
+                <div class="info-box">
+ 
+                    <p>
+                        Current Spending
+                    </p>
+ 
+                    <strong>
+                        ₹{{ "%.2f"|format(monthly_total) }}
+                    </strong>
+ 
+                </div>
+ 
+            </div>
+ 
+        </div>
+ 
+ 
+        <!-- SET BUDGET -->
+ 
+        <div class="card">
+ 
+            <h2>
+                Set Monthly Budget
+            </h2>
+ 
+            <form
+                method="POST"
+                action="{{ url_for('budget_page') }}"
+            >
+ 
+                <!-- MONTH (hidden, defaults to the current month) -->
+ 
+                <input
+                    type="hidden"
+                    name="month"
+                    value="{{ current_month_number }}"
+                >
+ 
+                <div class="form-group">
+ 
+                    <label for="amount">
+                        Monthly Budget (₹)
+                    </label>
+ 
+                    <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        value="{{ monthly_budget }}"
+                        min="0"
+                        step="0.01"
+                        required
+                    >
+ 
+                </div>
+ 
+ 
+                <button type="submit">
+                    Save Budget
+                </button>
+ 
+            </form>
+ 
+        </div>
+ 
+    </main>
+ 
+</body>
+ 
+</html>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

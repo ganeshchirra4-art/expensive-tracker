@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <title>Expense Tracker - Reports</title>
+ 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+ 
+    <style>
+ 
+        /* =========================
+           DESIGN TOKENS
+           Same palette as the rest of the app.
+        ========================= */
+ 
+        :root {
+            --bg-a: #eef0ff;
+            --bg-b: #ffe9f3;
+ 
+            --surface: #ffffff;
+ 
+            --ink: #241a3d;
+            --ink-soft: #7b7397;
+ 
+            --violet: #7c3aed;
+            --violet-deep: #5b21b6;
+            --pink: #ec4899;
+            --orange: #f59e0b;
+            --teal: #14b8a6;
+            --blue: #3b82f6;
+ 
+            --line: rgba(36, 26, 61, 0.07);
+ 
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 14px;
+        }
+ 
+ 
+        /* =========================
+           RESET
+        ========================= */
+ 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+ 
+        /* =========================
+           BODY / BACKGROUND MESH
+        ========================= */
+ 
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+ 
+            background:
+                radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.16), transparent 45%),
+                radial-gradient(circle at 90% 15%, rgba(236, 72, 153, 0.16), transparent 45%),
+                radial-gradient(circle at 20% 90%, rgba(20, 184, 166, 0.14), transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.14), transparent 45%),
+                linear-gradient(180deg, var(--bg-a), var(--bg-b));
+ 
+            background-attachment: fixed;
+        }
+ 
+ 
+        h1, h2, .logo {
+            font-family: 'Poppins', 'Inter', sans-serif;
+        }
+ 
+ 
+        /* =========================
+           NAVBAR
+        ========================= */
+ 
+        .navbar {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+ 
+            min-height: 76px;
+ 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+ 
+            padding: 15px 50px;
+ 
+            box-shadow: 0 6px 24px rgba(91, 33, 182, 0.08);
+ 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+ 
+ 
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+ 
+ 
+        .logo span {
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+ 
+ 
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+ 
+ 
+        .nav-links a {
+            text-decoration: none;
+ 
+            color: var(--ink-soft);
+ 
+            padding: 10px 16px;
+ 
+            border-radius: 30px;
+ 
+            font-size: 14px;
+            font-weight: 500;
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .nav-links a:hover {
+            background: rgba(124, 58, 237, 0.08);
+            color: var(--violet-deep);
+        }
+ 
+ 
+        .nav-links a.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+        }
+ 
+ 
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+ 
+        .container {
+            width: 90%;
+            max-width: 1100px;
+ 
+            margin: 0 auto;
+ 
+            padding: 50px 0 60px;
+        }
+ 
+ 
+        /* =========================
+           HEADING
+        ========================= */
+ 
+        .heading {
+            margin-bottom: 30px;
+        }
+ 
+ 
+        .heading h1 {
+            font-size: 34px;
+            font-weight: 700;
+ 
+            margin-bottom: 8px;
+ 
+            letter-spacing: -0.01em;
+        }
+ 
+ 
+        .heading p {
+            color: var(--ink-soft);
+ 
+            font-size: 15px;
+        }
+ 
+ 
+        /* =========================
+           SUMMARY CARDS
+        ========================= */
+ 
+        .cards {
+            display: grid;
+ 
+            grid-template-columns: repeat(3, 1fr);
+ 
+            gap: 18px;
+ 
+            margin-bottom: 26px;
+        }
+ 
+ 
+        .card {
+            background: var(--surface);
+ 
+            border-radius: var(--radius-lg);
+ 
+            padding: 24px;
+ 
+            box-shadow: 0 14px 30px -10px var(--glow, rgba(91, 33, 182, 0.28));
+ 
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+ 
+ 
+        .card:hover {
+            transform: translateY(-3px);
+ 
+            box-shadow: 0 18px 36px -10px var(--glow, rgba(91, 33, 182, 0.34));
+        }
+ 
+ 
+        .card:nth-child(1) { --glow: rgba(124, 58, 237, 0.3); }
+        .card:nth-child(2) { --glow: rgba(236, 72, 153, 0.3); }
+        .card:nth-child(3) { --glow: rgba(20, 184, 166, 0.3); }
+ 
+ 
+        .card p {
+            color: var(--ink-soft);
+ 
+            font-size: 13px;
+ 
+            margin-bottom: 10px;
+        }
+ 
+ 
+        .card h2 {
+            font-size: 24px;
+            font-weight: 700;
+ 
+            letter-spacing: -0.01em;
+        }
+ 
+ 
+        /* =========================
+           SECTIONS / TABLES
+        ========================= */
+ 
+        .section {
+            background: var(--surface);
+ 
+            border-radius: var(--radius-lg);
+ 
+            padding: 28px;
+ 
+            margin-bottom: 24px;
+ 
+            box-shadow: 0 16px 34px -14px rgba(91, 33, 182, 0.22);
+        }
+ 
+ 
+        .section h2 {
+            margin-bottom: 20px;
+ 
+            font-size: 19px;
+            font-weight: 600;
+        }
+ 
+ 
+        table {
+            width: 100%;
+ 
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+ 
+ 
+        th {
+            text-align: left;
+ 
+            padding: 12px 14px;
+ 
+            font-size: 12px;
+            font-weight: 600;
+ 
+            color: var(--ink-soft);
+ 
+            border-bottom: 1px solid var(--line);
+        }
+ 
+ 
+        td {
+            padding: 14px 14px;
+ 
+            border-bottom: 1px solid var(--line);
+ 
+            font-size: 14px;
+        }
+ 
+ 
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+ 
+ 
+        tbody tr:hover {
+            background: rgba(124, 58, 237, 0.05);
+        }
+ 
+ 
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+ 
+ 
+        .empty {
+            color: var(--ink-soft);
+ 
+            text-align: center;
+ 
+            padding: 30px;
+ 
+            font-size: 14px;
+        }
+ 
+ 
+        /* =========================
+           BUTTON
+        ========================= */
+ 
+        .button {
+            display: inline-block;
+ 
+            margin-top: 10px;
+ 
+            padding: 14px 24px;
+ 
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+ 
+            color: #ffffff;
+ 
+            text-decoration: none;
+ 
+            border-radius: var(--radius-sm);
+ 
+            font-size: 14px;
+            font-weight: 600;
+ 
+            box-shadow: 0 10px 24px rgba(124, 58, 237, 0.35);
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 30px rgba(124, 58, 237, 0.42);
+        }
+ 
+ 
+        /* =========================
+           RESPONSIVE
+        ========================= */
+ 
+        @media (max-width: 800px) {
+ 
+            .navbar {
+                flex-direction: column;
+ 
+                align-items: center;
+ 
+                gap: 15px;
+ 
+                padding: 15px;
+            }
+ 
+ 
+            .nav-links {
+                justify-content: center;
+ 
+                gap: 5px;
+            }
+ 
+ 
+            .nav-links a {
+                padding: 8px 10px;
+ 
+                font-size: 13px;
+            }
+ 
+ 
+            .cards {
+                grid-template-columns: 1fr;
+            }
+ 
+ 
+            .container {
+                width: 94%;
+ 
+                padding: 30px 0;
+            }
+ 
+ 
+            .heading h1 {
+                font-size: 26px;
+            }
+ 
+ 
+            table {
+                min-width: 600px;
+            }
+ 
+ 
+            .section {
+                padding: 20px;
+ 
+                overflow-x: auto;
+            }
+ 
+        }
+ 
+    </style>
+ 
+</head>
+ 
+<body>
+ 
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+ 
+    <nav class="navbar">
+ 
+        <div class="logo">
+            💜 Expense<span>Tracker</span>
+        </div>
+ 
+        <div class="nav-links">
+ 
+            <a href="{{ url_for('home') }}">
+                Dashboard
+            </a>
+ 
+            <a href="{{ url_for('add_expense') }}">
+                Add Expense
+            </a>
+ 
+            <a href="{{ url_for('history') }}">
+                History
+            </a>
+ 
+            <a href="{{ url_for('budget_page') }}">
+                Budget
+            </a>
+ 
+            <a
+                href="{{ url_for('reports') }}"
+                class="active"
+            >
+                Reports
+            </a>
+ 
+        </div>
+ 
+    </nav>
+ 
+ 
+    <!-- =========================
+         MAIN
+    ========================== -->
+ 
+    <main class="container">
+ 
+        <div class="heading">
+ 
+            <h1>
+                Expense Reports
+            </h1>
+ 
+            <p>
+                Analyze your spending and expense activity.
+            </p>
+ 
+        </div>
+ 
+ 
+        <!-- SUMMARY CARDS -->
+ 
+        <div class="cards">
+ 
+            <div class="card">
+ 
+                <p>
+                    Total Expenses
+                </p>
+ 
+                <h2>
+                    ₹{{ "%.2f"|format(total_expenses) }}
+                </h2>
+ 
+            </div>
+ 
+ 
+            <div class="card">
+ 
+                <p>
+                    Transactions
+                </p>
+ 
+                <h2>
+                    {{ transaction_count }}
+                </h2>
+ 
+            </div>
+ 
+ 
+            <div class="card">
+ 
+                <p>
+                    Current Month
+                </p>
+ 
+                <h2>
+                    ₹{{ "%.2f"|format(monthly_total) }}
+                </h2>
+ 
+            </div>
+ 
+        </div>
+ 
+ 
+        <!-- CATEGORY REPORT -->
+ 
+        <div class="section">
+ 
+            <h2>
+                Category-wise Spending
+            </h2>
+ 
+            {% if category_totals %}
+ 
+                <table>
+ 
+                    <thead>
+ 
+                        <tr>
+ 
+                            <th>
+                                Category
+                            </th>
+ 
+                            <th>
+                                Amount
+                            </th>
+ 
+                        </tr>
+ 
+                    </thead>
+ 
+                    <tbody>
+ 
+                        {% for category, amount in category_totals.items() %}
+ 
+                            <tr>
+ 
+                                <td>
+                                    {{ category }}
+                                </td>
+ 
+                                <td>
+                                    ₹{{ "%.2f"|format(amount) }}
+                                </td>
+ 
+                            </tr>
+ 
+                        {% endfor %}
+ 
+                    </tbody>
+ 
+                </table>
+ 
+            {% else %}
+ 
+                <div class="empty">
+                    No category data available.
+                </div>
+ 
+            {% endif %}
+ 
+        </div>
+ 
+ 
+        <!-- RECENT EXPENSES -->
+ 
+        <div class="section">
+ 
+            <h2>
+                Recent Expenses
+            </h2>
+ 
+            {% if recent_expenses %}
+ 
+                <table>
+ 
+                    <thead>
+ 
+                        <tr>
+ 
+                            <th>Date</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Amount</th>
+ 
+                        </tr>
+ 
+                    </thead>
+ 
+                    <tbody>
+ 
+                        {% for expense in recent_expenses %}
+ 
+                            <tr>
+ 
+                                <td>
+                                    {{ expense["date"] }}
+                                </td>
+ 
+                                <td>
+                                    {{ expense["description"] }}
+                                </td>
+ 
+                                <td>
+                                    {{ expense["category"] }}
+                                </td>
+ 
+                                <td>
+                                    ₹{{ "%.2f"|format(expense["amount"]) }}
+                                </td>
+ 
+                            </tr>
+ 
+                        {% endfor %}
+ 
+                    </tbody>
+ 
+                </table>
+ 
+            {% else %}
+ 
+                <div class="empty">
+                    No expenses available.
+                </div>
+ 
+            {% endif %}
+ 
+        </div>
+ 
+ 
+        <a
+            href="{{ url_for('add_expense') }}"
+            class="button"
+        >
+            + Add Expense
+        </a>
+ 
+    </main>
+ 
+</body>
+ 
+</html>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

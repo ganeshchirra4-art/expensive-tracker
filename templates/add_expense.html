@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+    <meta charset="UTF-8">
+ 
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ 
+    <title>Expense Tracker - Add Expense</title>
+ 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+ 
+    <style>
+ 
+        /* =========================
+           DESIGN TOKENS
+           Same palette as dashboard.html so the two pages feel
+           like one product.
+        ========================= */
+ 
+        :root {
+            --bg-a: #eef0ff;
+            --bg-b: #ffe9f3;
+ 
+            --surface: #ffffff;
+ 
+            --ink: #241a3d;
+            --ink-soft: #7b7397;
+ 
+            --violet: #7c3aed;
+            --violet-deep: #5b21b6;
+            --pink: #ec4899;
+            --orange: #f59e0b;
+            --teal: #14b8a6;
+            --blue: #3b82f6;
+ 
+            --red: #ef4444;
+            --green: #10b981;
+ 
+            --line: rgba(36, 26, 61, 0.09);
+ 
+            --radius-lg: 28px;
+            --radius-md: 20px;
+            --radius-sm: 14px;
+        }
+ 
+ 
+        /* =========================
+           RESET
+        ========================= */
+ 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+ 
+        /* =========================
+           BODY / BACKGROUND MESH
+        ========================= */
+ 
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+ 
+            background:
+                radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.16), transparent 45%),
+                radial-gradient(circle at 90% 15%, rgba(236, 72, 153, 0.16), transparent 45%),
+                radial-gradient(circle at 20% 90%, rgba(20, 184, 166, 0.14), transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(245, 158, 11, 0.14), transparent 45%),
+                linear-gradient(180deg, var(--bg-a), var(--bg-b));
+ 
+            background-attachment: fixed;
+        }
+ 
+ 
+        h1, .logo {
+            font-family: 'Poppins', 'Inter', sans-serif;
+        }
+ 
+ 
+        /* =========================
+           NAVBAR
+        ========================= */
+ 
+        .navbar {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+ 
+            min-height: 76px;
+ 
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+ 
+            padding: 15px 50px;
+ 
+            box-shadow: 0 6px 24px rgba(91, 33, 182, 0.08);
+ 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+ 
+ 
+        .logo {
+            font-size: 22px;
+            font-weight: 700;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+ 
+ 
+        .logo span {
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+ 
+ 
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+ 
+ 
+        .nav-links a {
+            text-decoration: none;
+ 
+            color: var(--ink-soft);
+ 
+            padding: 10px 16px;
+ 
+            border-radius: 30px;
+ 
+            font-size: 14px;
+            font-weight: 500;
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .nav-links a:hover {
+            background: rgba(124, 58, 237, 0.08);
+            color: var(--violet-deep);
+        }
+ 
+ 
+        .nav-links a.active {
+            color: #ffffff;
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+            box-shadow: 0 6px 16px rgba(124, 58, 237, 0.35);
+        }
+ 
+ 
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+ 
+        .container {
+            width: 90%;
+            max-width: 560px;
+ 
+            margin: 0 auto;
+ 
+            padding: 60px 0;
+        }
+ 
+ 
+        /* =========================
+           FORM CARD
+        ========================= */
+ 
+        .card {
+            background: var(--surface);
+ 
+            padding: 36px;
+ 
+            border-radius: var(--radius-lg);
+ 
+            box-shadow: 0 20px 44px -16px rgba(91, 33, 182, 0.3);
+        }
+ 
+ 
+        .card h1 {
+            font-size: 26px;
+            font-weight: 700;
+ 
+            margin-bottom: 6px;
+ 
+            letter-spacing: -0.01em;
+        }
+ 
+ 
+        .subtitle {
+            color: var(--ink-soft);
+ 
+            font-size: 14px;
+ 
+            margin-bottom: 24px;
+        }
+ 
+ 
+        /* =========================
+           FLASH MESSAGES
+        ========================= */
+ 
+        .message {
+            padding: 12px 16px;
+ 
+            border-radius: var(--radius-sm);
+ 
+            font-size: 14px;
+            font-weight: 500;
+ 
+            margin-bottom: 20px;
+        }
+ 
+ 
+        .message.success {
+            background: rgba(16, 185, 129, 0.12);
+            color: #067a56;
+        }
+ 
+ 
+        .message.error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #c62828;
+        }
+ 
+ 
+        /* =========================
+           FORM FIELDS
+        ========================= */
+ 
+        .form-group {
+            margin-bottom: 20px;
+        }
+ 
+ 
+        .form-group label {
+            display: block;
+ 
+            font-size: 13px;
+            font-weight: 600;
+ 
+            color: var(--ink);
+ 
+            margin-bottom: 8px;
+        }
+ 
+ 
+        .form-group input,
+        .form-group select {
+            width: 100%;
+ 
+            padding: 12px 14px;
+ 
+            border: 1.5px solid var(--line);
+ 
+            border-radius: var(--radius-sm);
+ 
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 14px;
+ 
+            color: var(--ink);
+ 
+            background: #faf9ff;
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .form-group input::placeholder {
+            color: #b1a9c9;
+        }
+ 
+ 
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+ 
+            border-color: var(--violet);
+ 
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.14);
+ 
+            background: #ffffff;
+        }
+ 
+ 
+        .form-group select {
+            appearance: none;
+ 
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%237b7397'%3E%3Cpath fill-rule='evenodd' d='M5.23 7.21a.75.75 0 011.06.02L10 11.293l3.71-4.06a.75.75 0 111.08 1.04l-4.25 4.65a.75.75 0 01-1.08 0l-4.25-4.65a.75.75 0 01.02-1.06z' clip-rule='evenodd'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+            background-size: 16px;
+ 
+            cursor: pointer;
+        }
+ 
+ 
+        /* =========================
+           BUTTONS
+        ========================= */
+ 
+        .button-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+ 
+            margin-top: 8px;
+        }
+ 
+ 
+        .button-group button {
+            flex: 1;
+ 
+            padding: 14px 20px;
+ 
+            border: none;
+ 
+            border-radius: var(--radius-sm);
+ 
+            background: linear-gradient(135deg, var(--violet), var(--pink));
+ 
+            color: #ffffff;
+ 
+            font-family: 'Inter', Arial, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+ 
+            cursor: pointer;
+ 
+            box-shadow: 0 10px 24px rgba(124, 58, 237, 0.32);
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .button-group button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 28px rgba(124, 58, 237, 0.4);
+        }
+ 
+ 
+        .button-group button:active {
+            transform: translateY(0);
+        }
+ 
+ 
+        .button-group .cancel {
+            flex: 1;
+ 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+ 
+            padding: 14px 20px;
+ 
+            border-radius: var(--radius-sm);
+ 
+            background: #f3f1fb;
+ 
+            color: var(--ink-soft);
+ 
+            text-decoration: none;
+ 
+            font-size: 14px;
+            font-weight: 600;
+ 
+            transition: 0.2s ease;
+        }
+ 
+ 
+        .button-group .cancel:hover {
+            background: #e9e5f7;
+            color: var(--ink);
+        }
+ 
+ 
+        /* =========================
+           RESPONSIVE
+        ========================= */
+ 
+        @media (max-width: 600px) {
+ 
+            .navbar {
+                flex-direction: column;
+ 
+                align-items: center;
+ 
+                gap: 15px;
+ 
+                padding: 15px;
+            }
+ 
+ 
+            .nav-links {
+                justify-content: center;
+ 
+                gap: 5px;
+            }
+ 
+ 
+            .nav-links a {
+                padding: 8px 10px;
+ 
+                font-size: 13px;
+            }
+ 
+ 
+            .container {
+                width: 92%;
+ 
+                padding: 40px 0;
+            }
+ 
+ 
+            .card {
+                padding: 26px;
+            }
+ 
+ 
+            .button-group {
+                flex-direction: column;
+            }
+ 
+        }
+ 
+    </style>
+ 
+</head>
+ 
+ 
+<body>
+ 
+ 
+    <!-- =========================
+         NAVBAR
+    ========================== -->
+ 
+    <nav class="navbar">
+ 
+        <div class="logo">
+            💜 Expense<span>Tracker</span>
+        </div>
+ 
+ 
+        <div class="nav-links">
+ 
+            <a href="{{ url_for('home') }}">
+                Dashboard
+            </a>
+ 
+ 
+            <a
+                href="{{ url_for('add_expense') }}"
+                class="active"
+            >
+                Add Expense
+            </a>
+ 
+ 
+            <a href="{{ url_for('history') }}">
+                History
+            </a>
+ 
+ 
+            <a href="{{ url_for('budget_page') }}">
+                Budget
+            </a>
+ 
+ 
+            <a href="{{ url_for('reports') }}">
+                Reports
+            </a>
+ 
+        </div>
+ 
+    </nav>
+ 
+ 
+    <!-- =========================
+         MAIN
+    ========================== -->
+ 
+    <main class="container">
+ 
+        <div class="card">
+ 
+            <h1>
+                Add Expense
+            </h1>
+ 
+            <p class="subtitle">
+                Add a new expense to your tracker.
+            </p>
+ 
+ 
+            <!-- FLASH MESSAGES -->
+ 
+            {% with messages = get_flashed_messages(with_categories=true) %}
+ 
+                {% if messages %}
+ 
+                    {% for category, message in messages %}
+ 
+                        <div class="message {{ category }}">
+                            {{ message }}
+                        </div>
+ 
+                    {% endfor %}
+ 
+                {% endif %}
+ 
+            {% endwith %}
+ 
+ 
+            <!-- FORM -->
+ 
+            <form
+                method="POST"
+                action="{{ url_for('add_expense') }}"
+            >
+ 
+ 
+                <!-- DESCRIPTION -->
+ 
+                <div class="form-group">
+ 
+                    <label for="description">
+                        Description
+                    </label>
+ 
+                    <input
+                        type="text"
+                        id="description"
+                        name="description"
+                        placeholder="Example: Groceries"
+                        required
+                    >
+ 
+                </div>
+ 
+ 
+                <!-- AMOUNT -->
+ 
+                <div class="form-group">
+ 
+                    <label for="amount">
+                        Amount (₹)
+                    </label>
+ 
+                    <input
+                        type="number"
+                        id="amount"
+                        name="amount"
+                        placeholder="Example: 500"
+                        step="0.01"
+                        min="0.01"
+                        required
+                    >
+ 
+                </div>
+ 
+ 
+                <!-- CATEGORY -->
+ 
+                <div class="form-group">
+ 
+                    <label for="category">
+                        Category
+                    </label>
+ 
+                    <select
+                        id="category"
+                        name="category"
+                    >
+ 
+                        <option value="">
+                            Select Category
+                        </option>
+ 
+                        <option value="Food">
+                            Food
+                        </option>
+ 
+                        <option value="Travel">
+                            Travel
+                        </option>
+ 
+                        <option value="Shopping">
+                            Shopping
+                        </option>
+ 
+                        <option value="Bills">
+                            Bills
+                        </option>
+ 
+                        <option value="Education">
+                            Education
+                        </option>
+ 
+                        <option value="Entertainment">
+                            Entertainment
+                        </option>
+ 
+                        <option value="Health">
+                            Health
+                        </option>
+ 
+                        <option value="Other">
+                            Other
+                        </option>
+ 
+                    </select>
+ 
+                </div>
+ 
+ 
+                <!-- DATE -->
+ 
+                <div class="form-group">
+ 
+                    <label for="date">
+                        Date
+                    </label>
+ 
+                    <input
+                        type="date"
+                        id="date"
+                        name="date"
+                        value="{{ today }}"
+                        required
+                    >
+ 
+                </div>
+ 
+ 
+                <!-- BUTTONS -->
+ 
+                <div class="button-group">
+ 
+                    <button type="submit">
+                        Add Expense
+                    </button>
+ 
+                    <a
+                        href="{{ url_for('home') }}"
+                        class="cancel"
+                    >
+                        Cancel
+                    </a>
+ 
+                </div>
+ 
+ 
+            </form>
+ 
+        </div>
+ 
+    </main>
+ 
+</body>
+ 
+</html>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
